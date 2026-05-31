@@ -58,9 +58,8 @@ def news_ten_plus_one():
         News(
             title=f'Новость {index}',
             text='Просто текст.',
-            date=today - timedelta(days=index)
-            ) for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
-        ]
+            date=today - timedelta(days=index))
+        for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)]
     News.objects.bulk_create(all_news)
     return News.objects.all()
 

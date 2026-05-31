@@ -41,7 +41,7 @@ class TestNoteCreation(TestCase):
         self.assertEqual(note.title, self.form_data['title'])
         self.assertEqual(note.text, self.form_data['text'])
         self.assertEqual(note.author, self.user)
-    
+
     def test_cant_create_note_with_existing_slug(self):
         """Нельзя создать заметку с уже существующим slug."""
         note = Note.objects.create(

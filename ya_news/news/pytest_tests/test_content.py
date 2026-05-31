@@ -24,6 +24,7 @@ def test_news_order(client, news_ten_plus_one):
     sorted_dates = sorted(all_dates, reverse=True)
     assert all_dates == sorted_dates
 
+
 @pytest.mark.django_db
 def test_comments_order(client, id_for_args, comments):
     """На странице новости отсортированы: сначала старые."""

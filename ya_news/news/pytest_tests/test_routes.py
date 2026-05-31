@@ -32,8 +32,7 @@ def test_pages_availability(client, name, args):
 )
 @pytest.mark.parametrize(
     'name',
-    ('news:edit', 'news:delete')
-    )
+    ('news:edit', 'news:delete'))
 def test_edit_delete_pages_availability(parametrized_client, name,
                                         expected_status, id_for_comment_args):
     """Доступность страниц редактирования/удаления для разных пользователей."""

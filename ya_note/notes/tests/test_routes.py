@@ -28,8 +28,7 @@ class TestRoutes(TestCase):
         cls.note = Note.objects.create(
             title='Заголовок',
             text='Текст',
-            author=cls.author
-            )
+            author=cls.author)
 
     def test_pages_availability(self):
         """Страницы, доступные всем пользователям."""
