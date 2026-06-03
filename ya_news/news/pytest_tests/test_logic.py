@@ -34,8 +34,7 @@ def test_user_can_create_comment(author_client, news,
     assert comment.author == author
 
 
-@pytest.mark.parametrize(
-        'bad_word', BAD_WORDS)
+@pytest.mark.parametrize('bad_word', BAD_WORDS)
 def test_user_cant_use_bad_words(author_client, id_for_args,
                                  bad_word, initial_comments_count):
     """При попытке добавить bad word форма возвращает ошибку."""
