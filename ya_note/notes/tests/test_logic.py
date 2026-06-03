@@ -25,18 +25,21 @@ class TestNoteCreation(TestCase):
             'text': 'Текст заметки',
         }
 
+    def setUp(self):
+        self.initial_note_count = Note.objects.count()
+
     def test_anonymous_user_cant_create_note(self):
         """Анонимный пользователь не может создать заметку."""
         self.client.post(self.create_url, data=self.form_data)
         notes_count = Note.objects.count()
-        self.assertEqual(notes_count, 0)
+        self.assertEqual(notes_count, self.initial_note_count)
 
     def test_authorized_user_can_create_note(self):
         """Авторизованный пользователь может создать заметку."""
         response = self.auth_client.post(self.create_url, data=self.form_data)
         self.assertRedirects(response, self.success_url)
         notes_count = Note.objects.count()
-        self.assertEqual(notes_count, 1)
+        self.assertEqual(notes_count, self.initial_note_count + 1)
         note = Note.objects.get()
         self.assertEqual(note.title, self.form_data['title'])
         self.assertEqual(note.text, self.form_data['text'])
@@ -56,7 +59,7 @@ class TestNoteCreation(TestCase):
             field='slug',
             errors=note.slug + WARNING
         )
-        self.assertEqual(Note.objects.count(), 1)
+        self.assertEqual(Note.objects.count(), self.initial_note_count + 1)
 
     def test_empty_slug(self):
         """Если slug не передан, он генерируется автоматически."""
@@ -99,15 +102,13 @@ class TestNoteEditDelete(TestCase):
         response = self.author_client.delete(self.delete_url)
         self.assertRedirects(response, self.success_url)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
-        notes_count = Note.objects.count()
-        self.assertEqual(notes_count, 0)
+        self.assertFalse(Note.objects.filter(slug=self.note.slug).exists())
 
     def test_user_cant_delete_note_of_another_user(self):
         """Другой пользователь не может удалить чужую заметку."""
         response = self.reader_client.delete(self.delete_url)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-        notes_count = Note.objects.count()
-        self.assertEqual(notes_count, 1)
+        self.assertTrue(Note.objects.filter(slug=self.note.slug).exists())
 
     def test_author_can_edit_note(self):
         """Автор может редактировать свою заметку."""

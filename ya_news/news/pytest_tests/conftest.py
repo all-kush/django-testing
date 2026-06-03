@@ -2,8 +2,9 @@ import pytest
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.utils import timezone
 from django.test.client import Client
+from django.urls import reverse
+from django.utils import timezone
 
 from news.forms import BAD_WORDS
 from news.models import News, Comment
@@ -11,16 +12,19 @@ from news.models import News, Comment
 
 @pytest.fixture
 def author(django_user_model):
+    """Возвращает объект пользователя являющегося автором."""
     return django_user_model.objects.create(username='Автор')
 
 
 @pytest.fixture
 def not_author(django_user_model):
+    """Возвращает объект пользователя, не являющегося автором."""
     return django_user_model.objects.create(username='Не Автор')
 
 
 @pytest.fixture
 def author_client(author):
+    """Возвращает авторизованный клиент для автора."""
     client = Client()
     client.force_login(author)
     return client
@@ -28,6 +32,7 @@ def author_client(author):
 
 @pytest.fixture
 def not_author_client(not_author):
+    """Возвращает авторизованный клиент для не автора."""
     client = Client()
     client.force_login(not_author)
     return client
@@ -36,12 +41,14 @@ def not_author_client(not_author):
 @pytest.fixture
 @pytest.mark.django_db
 def news():
+    """Возвращает объект новости."""
     return News.objects.create(title='Заголовок', text='Текст')
 
 
 @pytest.fixture
 @pytest.mark.django_db
 def comment(news, author):
+    """Возвращает объект комментария к новости."""
     return Comment.objects.create(
         news=news,
         author=author,
@@ -67,7 +74,7 @@ def news_ten_plus_one():
 @pytest.fixture
 @pytest.mark.django_db
 def comments(news, author):
-    """Создаёт 10 комментариев к новости с разным временем."""
+    """Создаёт COMMENTS_COUNT комментариев к новости с разным временем."""
     now = timezone.now()
     comments = [
         Comment(
@@ -76,7 +83,7 @@ def comments(news, author):
             text=f'Текст {index}',
             created=now + timedelta(days=index)
         )
-        for index in range(10)
+        for index in range(settings.COMMENTS_COUNT)
     ]
     Comment.objects.bulk_create(comments)
     return Comment.objects.all()
@@ -110,3 +117,21 @@ def new_comment_data():
 def bad_words_data():
     """Данные с нецензурными словами."""
     return {'text': f'Какой-то текст, {BAD_WORDS[0]}, еще текст'}
+
+
+@pytest.fixture
+def home_url():
+    """Возвращает URL главной страницы."""
+    return reverse('news:home')
+
+
+@pytest.fixture
+def detail_url(id_for_args):
+    """Возвращает URL страницы отдельной новости."""
+    return reverse('news:detail', args=id_for_args)
+
+
+@pytest.fixture
+def initial_comments_count():
+    """Возвращает начальное количество комментариев в БД."""
+    return Comment.objects.count()

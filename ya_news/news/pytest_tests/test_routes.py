@@ -1,11 +1,13 @@
-import pytest
 from http import HTTPStatus
+
+import pytest
 from django.urls import reverse
 from pytest_django.asserts import assertRedirects
 from pytest_lazyfixture import lazy_fixture as lf
 
+pytestmark = pytest.mark.django_db
 
-@pytest.mark.django_db
+
 @pytest.mark.parametrize(
     'name, args',
     [
@@ -22,7 +24,6 @@ def test_pages_availability(client, name, args):
     assert response.status_code == HTTPStatus.OK
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     'parametrized_client, expected_status',
     [
@@ -41,7 +42,6 @@ def test_edit_delete_pages_availability(parametrized_client, name,
     assert response.status_code == expected_status
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize('name', ('news:edit', 'news:delete'))
 def test_redirect_for_anonymous(client, name, id_for_comment_args):
     """Перенаправление анонимного пользователя."""
