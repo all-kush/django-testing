@@ -90,18 +90,6 @@ def comments(news, author):
 
 
 @pytest.fixture
-def id_for_args(news):
-    """Возвращает кортеж с id новости."""
-    return (news.id,)
-
-
-@pytest.fixture
-def id_for_comment_args(comment):
-    """Возвращает кортеж с id комментария."""
-    return (comment.id,)
-
-
-@pytest.fixture
 def comment_form_data():
     """Данные для формы комментария."""
     return {'text': 'Текст комментария'}
@@ -114,21 +102,27 @@ def new_comment_data():
 
 
 @pytest.fixture
-def bad_words_data():
-    """Данные с нецензурными словами."""
-    return {'text': f'Какой-то текст, {BAD_WORDS[0]}, еще текст'}
-
-
-@pytest.fixture
 def home_url():
     """Возвращает URL главной страницы."""
     return reverse('news:home')
 
 
 @pytest.fixture
-def detail_url(id_for_args):
+def detail_url(news):
     """Возвращает URL страницы отдельной новости."""
-    return reverse('news:detail', args=id_for_args)
+    return reverse('news:detail', args=(news.id,))
+
+
+@pytest.fixture
+def edit_url(comment):
+    """Возвращает URL редактирования комментария."""
+    return reverse('news:edit', args=(comment.id,))
+
+
+@pytest.fixture
+def delete_url(comment):
+    """Возвращает URL страницы удаления комментария."""
+    return reverse('news:delete', args=(comment.id,))
 
 
 @pytest.fixture
