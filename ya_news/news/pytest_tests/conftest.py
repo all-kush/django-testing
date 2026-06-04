@@ -6,7 +6,6 @@ from django.test.client import Client
 from django.urls import reverse
 from django.utils import timezone
 
-from news.forms import BAD_WORDS
 from news.models import News, Comment
 
 
