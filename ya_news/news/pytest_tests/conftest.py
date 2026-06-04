@@ -102,6 +102,12 @@ def new_comment_data():
 
 
 @pytest.fixture
+def id_for_args(news):
+    """Возвращает кортеж с id новости."""
+    return (news.id,)
+
+
+@pytest.fixture
 def home_url():
     """Возвращает URL главной страницы."""
     return reverse('news:home')
